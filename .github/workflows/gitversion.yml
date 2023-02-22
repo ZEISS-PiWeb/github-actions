@@ -3,7 +3,7 @@
 name: GitVersion
 
 on:
-  workflow_call:
+  workflow_call:                                                       # Called by other workflows only.
     inputs:
       is_prerelease:
         description: 'Define if this is a prerelease.'
@@ -12,44 +12,46 @@ on:
       suffix:
         description: 'Define the prerelease suffix, e.g. alpha.'
         required: false
-        type: string
+        type: string                                                   # Use alpha, beta, anything else or leave empty.
         default: ""
-    outputs:
+    outputs:                                                           # Make this workflow's output accessible to the whole workflow.
       package_version:
         description: "Computed version for the package (SemVer)"
-        value: ${{ jobs.nuget-version.outputs.version_output }}
+        value: ${{ jobs.nuget-version.outputs.version_output }}        # From the job "nuget-version" get the output "version_output".
         
 defaults:
   run:
-    working-directory: src
+    working-directory: src                                             # Set the default working directory.
     
 jobs:
-  nuget-version:
+  nuget-version:                                                       # Calculate the nuget version.
 
     runs-on: ubuntu-latest
-    outputs:
-      version_output: ${{ steps.nuget_version.outputs.final_version }}
+    outputs:                                                           # Make this workflow's output accessible to the whole workflow.
+      version_output: ${{ steps.nuget_version.outputs.final_version }} # From the step "nuget_version" get the output "final_version".
     
     steps:
     - uses: actions/checkout@v3
       with:
-        fetch-depth: 0
+        fetch-depth: 0                                                 # Checkout the full repo.
         
     - name: Git Versioning
       id: gitversion
-      uses: paulhatch/semantic-version@v4.0.2
+      uses: paulhatch/semantic-version@v4.0.2                          # Run a custom action from there.
       with:
         tag_prefix: "release/"
-        format: "${major}.${minor}.${patch}"
-        
-    # Format is X.X.X-alpha000X-X, e.g. 8.1.0-alpha0008-42, where 0008 means 8 commits since last tag and 42 is the github run number.
+        format: "${major}.${minor}.${patch}"                           # Define the format for assembling the version number.
+
     - name: Append prerelease suffix
       if: inputs.is_prerelease
+      # prerelease_version: {suffix from inputs}{commit count since last release tag}-{run-count, not raised by re-run}
+      # Example: -alpha0008-42
       run: |
         echo "::set-output name=prerelease_suffix::-${{ inputs.suffix }}$(printf %4s ${{ steps.gitversion.outputs.increment }} | tr ' ' 0)-${{ github.run_number }}"
       id: prerelease_version
       
     - name: Output version
+      # If input "prerelease" == false, then steps.prerelease_version.outputs.prerelease_suffix will be empty.
       run: |
            echo "::set-output name=final_version::${{ steps.gitversion.outputs.version }}${{ steps.prerelease_version.outputs.prerelease_suffix }}"
-      id: nuget_version
+      id: nuget_version                                                # Output name.

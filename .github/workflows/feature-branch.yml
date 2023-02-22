@@ -2,8 +2,8 @@
 
 name: Build on feature/fix branch
 
-# Run on manual trigger only
 on:
+  # Called by other workflows only.
   workflow_call:
     inputs:
       do_pack:
@@ -12,32 +12,42 @@ on:
         type: boolean
 
 jobs:
+  # Determines the feature branch name.
   get-feature-branch:
   
     runs-on: ubuntu-latest
+    # Set the output for this job to make it accessible in the whole workflow.
     outputs:
+      # Use the step with ID "normalize" and from the ouput with name "branch_name".
       branch_name: ${{ steps.normalize.outputs.branch_name }}
     
     steps:
     - uses: actions/checkout@v3
-    
-    # Remove feature/fix branch prefix, hyphens etc. and trim to 20 characters
     - name: Normalize branch name
       run: |
+        # Take the branch name by GitHub variable "ref_name".
         branch="${{ github.ref_name }}"
+        # Remove special characters.
         noSlashes=`echo $branch | sed "s/[^[:alnum:]]//g"`
+        # Remove "/feature".
         noFeature="${noSlashes/feature/}"
+        # Remove "/fix".
         noFix="${noFeature/fix/}"
+        # Shorten name to 20 characters. Set it as output of the name "branch_name".
         echo "::set-output name=branch_name::$( echo $noFix | cut -c 1-20 )"
       id: normalize
 
   feature-branch:
+    # Requires the step above.
     needs: get-feature-branch
+    # Run build-and-pack.yml.
     uses: ./.github/workflows/build-and-pack.yml
     with:
       configuration: "Debug"
       is_prerelease: true
       do_pack: ${{ inputs.do_pack }}
+      # Needs.<job-name> gives access to the prior job's output.
       suffix: "alpha-${{ needs.get-feature-branch.outputs.branch_name }}"
       publish_target: "None"
+    # Pass on secrets to the next workflow.
     secrets: inherit

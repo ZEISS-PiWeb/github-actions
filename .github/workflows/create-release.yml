@@ -1,8 +1,7 @@
-# Create a stable NuGet release. This workflow is manually triggered.
+# Create a stable NuGet release.
 
 name: Create release
 
-# Run on manual trigger only
 on:
   workflow_call:
 
@@ -21,26 +20,29 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ secrets.ADMIN_TOKEN }}
+          # Invoking workflow has to pass a personal access token with permission to pull/push on the target repo.
+          token: ${{ secrets.PUSH_TO_GITHUB_REPO_PAT }}
           
-      - name: Output nuget version to variable
+      - name: Save NuGet version to a variable for easy access.
         run: |
           echo "NUGET_VERSION=${{ needs.compute-version.outputs.package_version }}" >> $GITHUB_ENV
 
       - name: Setup git config
         run: |
-          # setup the username and email. We use the 'GitHub Actions Bot'
+          # Setup bot user who will own the commits. We use the 'GitHub Actions Bot'.
           git config user.name github-actions
           git config user.email github-actions@github.com
           
       - name: Start release branch
         run: |
           git checkout develop
+          echo Create release branch release/X.X.X
           git checkout -b release/${{ env.NUGET_VERSION }}
           
       - name: Commit and merge changes
         run: |
-          echo Change version number, commit and push
+          # Change version number in all *.csproj files.
+          echo Change version number, commit and push.
           find . -type f -name "*.csproj" -exec sed -i 's#<PackageVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<PackageVersion>${{ env.NUGET_VERSION }}#g' '{}' \;
           find . -type f -name "*.csproj" -exec sed -i 's#<AssemblyVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<AssemblyVersion>${{ env.NUGET_VERSION }}#g' '{}' \;
 
@@ -70,14 +72,17 @@ jobs:
       - name: Push all branches
         run: |
           git checkout main
+          # We push branch "main" with all tags so nothing gets lost.
           git push origin main --tags
           git checkout develop
           git push origin develop
+          # We keep the support branch for bug and security fixes.
           git checkout support/${{ env.NUGET_VERSION }}
           git push origin support/${{ env.NUGET_VERSION }}
           
   build-and-publish:
     needs: release-flow
+    # Last but not least, run, package and publish from "main" to upload stable NuGet.
     uses: ./.github/workflows/build-and-pack.yml
     with:
       configuration: "Release"

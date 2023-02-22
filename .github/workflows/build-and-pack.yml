@@ -4,7 +4,7 @@
 name: Build, test & pack
 
 on:
-  workflow_call:
+  workflow_call: # Called by other workflows only.
     inputs:
       configuration:
         description: 'Define whether this is a debug or a release build.'
@@ -15,6 +15,7 @@ on:
         required: true
         type: boolean
       is_prerelease:
+        # Decides whether a pre-release suffix is needed.
         description: 'Define if this is a prerelease.'
         required: true
         type: boolean
@@ -29,9 +30,11 @@ on:
 
 defaults:
   run:
+    # Set the default working directory.
     working-directory: src
 
 jobs:
+  # Computes version with gitversion.yml.
   compute-version:
     uses: ./.github/workflows/gitversion.yml
     with:
@@ -44,7 +47,7 @@ jobs:
     needs: compute-version
     runs-on: windows-latest
     
-    steps:      
+    steps:
     - uses: actions/checkout@v3
            
     - name: Setup .NET
@@ -56,16 +59,19 @@ jobs:
       run: dotnet restore
       
     - name: Build
+      # Build. Don't run restore again.
       run: dotnet build --no-restore -c ${{ inputs.configuration }}
       
     - name: Test
       run: dotnet test --no-build --verbosity normal -c ${{ inputs.configuration }}
       
     - name: Pack
+      # Put the nugets into the folder "package_output". Use the calculated version from the step "compute-version".
       if: inputs.do_pack
       run: dotnet pack --no-restore --no-build -o package_output -c ${{ inputs.configuration }} -p:PackageVersion=${{ needs.compute-version.outputs.package_version }}
       
     - name: Upload artifacts
+      # Upload all NuGet packages to GitHub. Artifact name "packages".
       if: inputs.do_pack
       uses: actions/upload-artifact@v3
       with:
@@ -74,6 +80,7 @@ jobs:
         
   publish:
     needs: build-and-pack
+    # Publish NuGet packages only on "push" events (merge of PR into develop) or on manual run (on release).
     if: ${{ inputs.do_pack && ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) }}
     uses: ./.github/workflows/publish.yml
     with:
