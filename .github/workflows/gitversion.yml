@@ -47,11 +47,11 @@ jobs:
       # prerelease_version: {suffix from inputs}{commit count since last release tag}-{run-count, not raised by re-run}
       # Example: -alpha0008-42
       run: |
-        echo "::set-output name=prerelease_suffix::-${{ inputs.suffix }}$(printf %4s ${{ steps.gitversion.outputs.increment }} | tr ' ' 0)-${{ github.run_number }}"
+        echo "prerelease_suffix=-${{ inputs.suffix }}$(printf %4s ${{ steps.gitversion.outputs.increment }} | tr ' ' 0)-${{ github.run_number }}" >> $GITHUB_OUTPUT
       id: prerelease_version
       
     - name: Output version
       # If input "prerelease" == false, then steps.prerelease_version.outputs.prerelease_suffix will be empty.
       run: |
-           echo "::set-output name=final_version::${{ steps.gitversion.outputs.version }}${{ steps.prerelease_version.outputs.prerelease_suffix }}"
+        echo "final_version=${{ steps.gitversion.outputs.version }}${{ steps.prerelease_version.outputs.prerelease_suffix }}" >> $GITHUB_OUTPUT
       id: nuget_version                                                # Output name.
