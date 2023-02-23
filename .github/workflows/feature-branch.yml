@@ -34,7 +34,7 @@ jobs:
         # Remove "/fix".
         noFix="${noFeature/fix/}"
         # Shorten name to 20 characters. Set it as output of the name "branch_name".
-        echo "::set-output name=branch_name::$( echo $noFix | cut -c 1-20 )"
+        echo "branch_name=$( echo $noFix | cut -c 1-20 )" >> $GITHUB_OUTPUT
       id: normalize
 
   feature-branch:
