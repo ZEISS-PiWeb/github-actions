@@ -75,7 +75,8 @@ jobs:
           echo Checkout develop
           git checkout develop
           echo Merge back main into develop
-          git merge --no-ff main
+          # We add [skip actions] to the merge commit message to suppress triggering other workflows by the following push.
+          git merge --no-ff --no-edit -m "[skip actions] merge back 'main' into 'develop'" main
           
       - name: Push all branches
         run: |
