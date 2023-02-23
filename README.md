@@ -1,5 +1,79 @@
-# github-actions
-Repository for re-usable GitHub actions.
+# Reusable GitHub Actions
+
+Repository for reusable GitHub actions.
+
+## Action `build-and-pack.yml`
+
+Builds, tests and packs the source code as NuGet package. It's assumed that all source files reside in a directory `src` inside the root of the repository.
+
+### Inputs
+
+|Input name|Description|Required|Type|
+|----------|-----------|--------|----|
+|`configuration`|Define whether this is a debug or a release build.|yes|`string`|
+|`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
+|`is_prerelease`|Define if this is a prerelease.|yes|`boolean`|
+|`suffix`|Define the prerelease suffix, e.g. alpha.|yes|`string`|
+|`publish_target`|Define the publish target (None/nuget.org).|yes|`string`|
+
+## Action `create-release.yml`
+
+`create-release.yml` uses [release-action by ncipollo](https://github.com/ncipollo/release-action) to automatically generate release notes from the commits since the latest release and new contributors if there are any.
+
+### Inputs
+
+|Input name|Description|Required|Default value|
+|----------|-----------|--------|-------------|
+|`generate_release_notes`|Generates release notes from the commits since the last release and new contributors and adds them to the GitHub page.|no|`false`|
+
+## Action `develop.yml`
+
+Workflow to build and publish the develop branch.
+
+### Inputs
+
+|Input name|Description|Required|Type|
+|----------|-----------|--------|----|
+|`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
+
+## Action `feature-branch.yml`
+
+Workflow to build and publish feature/fix branches.
+
+### Inputs
+
+|Input name|Description|Required|Type|
+|----------|-----------|--------|----|
+|`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
+
+## Action `gitversion.yml`
+
+This workflow uses [semantic-version by paulhatch](https://github.com/PaulHatch/semantic-version) to automatically raise major, minor and fix version numbers on respective changes. To use this functionality include `(MAJOR)` or `(MINOR)` in your commit message if you introduce breaking changes (`(MAJOR)`) or new features (`(MINOR)`). The fix version will be raised automatically if there are any changes between releases.
+
+### Inputs
+
+|Input name|Description|Required|Type|Default value|
+|----------|-----------|--------|----|-------------|
+|`is_prerelease`|Define if this is a prerelease.|yes|`boolean`|none|
+|`suffix`|Define the prerelease suffix, e.g. alpha.|yes|`string`|`""`|
+
+### Outputs
+
+|Output name|Description|Type|
+|-----------|-----------|----|
+|`package_version`|Computed version for the package (SemVer).|`string`|
+
+## Action `publish.yml`
+
+Publish the build artifact (NuGet package) to a target nuget feed.
+
+### Inputs
+
+|Input name|Description|Required|Type|
+|----------|-----------|--------|----|
+|`target`|Define the target feed to push the artifact (e.g. nuget.org).|yes|`string`|
+
+## Secrets
 
 Two of the workflows require secrets to be passed on to work as intended:
 
