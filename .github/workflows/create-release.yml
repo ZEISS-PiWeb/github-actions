@@ -4,6 +4,12 @@ name: Create release
 
 on:
   workflow_call:
+    inputs:
+      generate_release_notes:
+        description: 'Generates release notes from the commits since the last release and new contributors and adds them to the GitHub page.'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
 
@@ -15,6 +21,8 @@ jobs:
   release-flow:
     needs: compute-version
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
       - uses: actions/checkout@v3
@@ -79,6 +87,15 @@ jobs:
           # We keep the support branch for bug and security fixes.
           git checkout support/${{ env.NUGET_VERSION }}
           git push origin support/${{ env.NUGET_VERSION }}
+
+      # Automatically create release notes on the GitHub page.
+      # They are assembled from commit messages and contributors.
+      - name: Create Release Notes
+        if: inputs.generate_release_notes
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          generateReleaseNotes: true
+          tag: release/${{ needs.compute-version.outputs.package_version }}
           
   build-and-publish:
     needs: release-flow
