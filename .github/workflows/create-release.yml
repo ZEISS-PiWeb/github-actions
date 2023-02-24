@@ -1,6 +1,6 @@
 # Create a stable NuGet release.
 
-name: Create release
+name: Create & Publish - Releasing new version
 
 on:
   workflow_call:
@@ -12,8 +12,17 @@ on:
         default: false
 
 jobs:
-
+  check-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if not on develop
+        if: ${{ github.ref_name != 'develop' }}
+        run: |
+          echo We are on branch ${{ github.ref_name }}. Do run from 'develop' only! Failing...
+          exit 1
+  
   compute-version:
+    needs: check-branch
     uses: ./.github/workflows/gitversion.yml
     with:
       is_prerelease: false
