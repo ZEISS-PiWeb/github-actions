@@ -22,6 +22,9 @@ on:
         description: "Computed version for the package (SemVer)"
         # From the job "nuget-version" get the output "version_output".
         value: ${{ jobs.nuget-version.outputs.version_output }}
+      semver_raise_type:
+        description: "The type of version raise (major|minor|patch)"
+        value: ${{ jobs.nuget-version.outputs.semver_raise_type }}
         
 defaults:
   run:
@@ -37,12 +40,13 @@ jobs:
     outputs:
       # From the step "nuget_version" get the output "final_version".
       version_output: ${{ steps.nuget_version.outputs.final_version }}
+      semver_raise_type: ${{ steps.gitversion.outputs.version_type }}
     
     steps:
     - uses: actions/checkout@v3
       with:
         # Checkout the full repo.
-        fetch-depth: 0                                                 
+        fetch-depth: 0
         
     - name: Git Versioning
       id: gitversion
@@ -51,7 +55,7 @@ jobs:
       with:
         # Define the format for assembling the version number.
         tag_prefix: "release/"
-        version_format: "${major}.${minor}.${patch}"                   
+        version_format: "${major}.${minor}.${patch}"
 
     - name: Append prerelease suffix
       if: inputs.is_prerelease

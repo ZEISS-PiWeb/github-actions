@@ -40,11 +40,28 @@ jobs:
           # Setup bot user who will own the commits. We use the 'GitHub Actions Bot'.
           git config user.name github-actions
           git config user.email github-actions@github.com
+
+      - name: Create support branch
+        if: ${{ needs.compute-version.outputs.semver_raise_type == 'major' }}
+        run: |
+          echo This is a new major release. Creating support branch for last release.
+          git checkout main
+          echo Looking for last release...
+          # Get the last release tag.
+          lastVersion=$( git describe --tags --abbrev=0 --match=release/* )
+          # Cut off 'release/' and the fix version.
+          supportVersion=${lastVersion/release\//''}
+          supportVersion=${supportVersion%.*}
+          echo Last release was $lastVersion. Creating branch...
+          # Create the support branch at the position of the last release tag.
+          git checkout -b support/$supportVersion $lastVersion
+          git push origin support/$supportVersion
+          echo Done.
           
       - name: Start release branch
         run: |
           git checkout develop
-          echo Create release branch release/X.X.X
+          echo Create release branch release/${{ env.NUGET_VERSION }}
           git checkout -b release/${{ env.NUGET_VERSION }}
           
       - name: Commit and merge changes
@@ -69,9 +86,8 @@ jobs:
           echo Tag release commit
           git tag release/${{ env.NUGET_VERSION }}
           
-          echo Creating support branch
-          git checkout -b support/${{ env.NUGET_VERSION }}
-          
+      - name: Back-merge of main into develop
+        run: |
           echo Checkout develop
           git checkout develop
           echo Merge back main into develop
@@ -85,10 +101,7 @@ jobs:
           git push origin main --tags
           git checkout develop
           git push origin develop
-          # We keep the support branch for bug and security fixes.
-          git checkout support/${{ env.NUGET_VERSION }}
-          git push origin support/${{ env.NUGET_VERSION }}
-
+          
       # Automatically create release notes on the GitHub page.
       # They are assembled from commit messages and contributors.
       - name: Create Release Notes

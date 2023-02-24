@@ -20,6 +20,8 @@ Builds, tests and packs the source code as NuGet package. It's assumed that all 
 
 `create-release.yml` uses [release-action by ncipollo](https://github.com/ncipollo/release-action) to automatically generate release notes from the commits since the latest release and new contributors if there are any.
 
+> Keep in mind that creating a release will create a support branch at the position of the last version tag, if you introduced any breaking changes since then. Therefore it is recommended to run `create-release.yml` if you want a release that contains all your features and bug fixes for the last major version., before merging a PR with breaking changes.
+
 ### Inputs
 
 |Input name|Description|Required|Default value|
@@ -62,6 +64,7 @@ This workflow uses [semantic-version by paulhatch](https://github.com/PaulHatch/
 |Output name|Description|Type|
 |-----------|-----------|----|
 |`package_version`|Computed version for the package (SemVer).|`string`|
+|`semver_raise_type`|The type of version raise (major|minor|patch).|`string`|
 
 ## Action `publish.yml`
 
