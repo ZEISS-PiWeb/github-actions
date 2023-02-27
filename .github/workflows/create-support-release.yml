@@ -1,4 +1,11 @@
-# Create a stable NuGet release from a support branch.
+# This workflow
+# + runs on support branches only,
+# + raises version numbers semantically,
+# + sets a version tag,
+# + generates release notes from commits and contributors
+# + and publishes a NuGet.
+#
+# This workflow must be called from other workflows.
 
 name: Create & Publish - Releasing new support version
 

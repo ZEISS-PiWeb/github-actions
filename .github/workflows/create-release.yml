@@ -1,4 +1,13 @@
-# Create a stable NuGet release.
+# This workflow
+# + creates a new release branch from develop,
+# + raises version numbers semantically,
+# + merges the release branch into main,
+# + sets a version tag,
+# + generates release notes from commits and contributors,
+# + creates a support branch off the last release if necessary
+# + and publishes a NuGet.
+#
+# This workflow must be called from other workflows.
 
 name: Create & Publish - Releasing new version
 

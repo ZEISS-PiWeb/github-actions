@@ -64,7 +64,7 @@ This workflow uses [semantic-version by paulhatch](https://github.com/PaulHatch/
 |Output name|Description|Type|
 |-----------|-----------|----|
 |`package_version`|Computed version for the package (SemVer).|`string`|
-|`semver_raise_type`|The type of version raise (major|minor|patch).|`string`|
+|`semver_raise_type`|The type of version raise (major,minor,patch).|`string`|
 
 ## Action `publish.yml`
 

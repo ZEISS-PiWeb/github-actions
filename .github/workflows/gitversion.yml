@@ -1,9 +1,12 @@
-# Compute nuget version using GitVersion.
+# This workflow
+# + calculates a semantic version number
+# + and appends suffixes if necessary.
+#
+# This workflow must be called from other workflows.
 
-name: GitVersion
+name: Calculate semantic release version
 
 on:
-  # Called by other workflows only.
   workflow_call:
     inputs:
       is_prerelease:

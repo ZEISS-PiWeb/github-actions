@@ -1,9 +1,13 @@
-# Workflow to build and publish feature/fix branches
+# This workflow
+# + builds and tests the chosen branch,
+# + packs an alpha NuGet package
+# + and stores the package as artifact.
+#
+# This workflow must be called from other workflows.
 
-name: Build on feature/fix branch
+name: Build, test & pack beta on fix or feature branch
 
 on:
-  # Called by other workflows only.
   workflow_call:
     inputs:
       do_pack:
