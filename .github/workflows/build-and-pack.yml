@@ -1,5 +1,12 @@
-# Build, test and pack the source code as a nuget.
+# This workflow
+# + computes a semantic version,
+# + builds and tests the active branch,
+# + packs a NuGet with the given configuration,
+# + stores the package as artifact
+# + and publishes the package on pushes and manual runs.
+#
 # It's assumed that all source files reside in a directory 'src' inside the root of the repository.
+# This workflow must be called from other workflows.
 
 name: Build, test & pack
 

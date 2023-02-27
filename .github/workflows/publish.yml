@@ -1,6 +1,10 @@
-# Publish the build artifact (Nuget) to a target nuget feed.
+# This workflow
+# + downloads built NuGet packages from the artifacts,
+# + publishes them to a specified NuGet feed.
+#
+# This workflow must be called from other workflows.
 
-name: Publish-Artifact
+name: Publish artifact
 
 on:
   workflow_call:

@@ -1,9 +1,12 @@
-# Workflow to build and publish the develop branch
+# This workflow
+# + builds and tests the develop branch,
+# + can pack and upload a beta NuGet package
+#
+# This workflow must be called from other workflows.
 
-name: Build on develop
+name: Build, test & pack beta on develop
 
 on:
-  # Will only be called from other workflows.
   workflow_call:
     inputs:
       do_pack:
@@ -13,7 +16,6 @@ on:
 
 jobs:
   develop:
-    # Run build-and-pack.yml
     uses: ./.github/workflows/build-and-pack.yml
     with:
       configuration: "Debug"
