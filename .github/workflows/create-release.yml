@@ -19,6 +19,11 @@ on:
         required: false
         type: boolean
         default: false
+    dotnet_version:
+        description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
+        required: false
+        type: string
+        default: '6.0.x'
 
 jobs:
   check-branch:
@@ -139,4 +144,5 @@ jobs:
       is_prerelease: false
       suffix: "stable"
       publish_target: "nuget.org"
+      dotnet_version: ${{ inputs.dotnet_version }}
     secrets: inherit

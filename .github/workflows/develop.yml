@@ -13,6 +13,11 @@ on:
         description: 'If this build should be packed as NuGet package.'
         required: true
         type: boolean
+    dotnet_version:
+        description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
+        required: false
+        type: string
+        default: '6.0.x'
 
 jobs:
   develop:
@@ -23,5 +28,6 @@ jobs:
       is_prerelease: true
       suffix: "beta"
       publish_target: "nuget.org"
+      dotnet_version: ${{ inputs.dotnet_version }}
     # Pass on secrets to the next workflow.
     secrets: inherit
