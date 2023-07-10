@@ -34,6 +34,11 @@ on:
         description: 'Define the publish target (None/nuget.org).'
         required: true
         type: string
+      dotnet_version:
+        description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
+        required: false
+        type: string
+        default: '6.0.x'
 
 defaults:
   run:
@@ -60,7 +65,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: ${{ inputs.dotnet_version }}
         
     - name: Restore dependencies
       run: dotnet restore

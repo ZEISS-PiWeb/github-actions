@@ -14,6 +14,11 @@ on:
         description: 'If this build should be packed as NuGet package.'
         required: true
         type: boolean
+    dotnet_version:
+        description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
+        required: false
+        type: string
+        default: '6.0.x'
 
 jobs:
   # Determines the feature branch name.
@@ -53,5 +58,6 @@ jobs:
       # Needs.<job-name> gives access to the prior job's output.
       suffix: "alpha-${{ needs.get-feature-branch.outputs.branch_name }}"
       publish_target: "None"
+      dotnet_version: ${{ inputs.dotnet_version }}
     # Pass on secrets to the next workflow.
     secrets: inherit
