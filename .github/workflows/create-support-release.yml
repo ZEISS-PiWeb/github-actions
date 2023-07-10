@@ -17,7 +17,7 @@ on:
         required: false
         type: boolean
         default: false
-    dotnet_version:
+      dotnet_version:
         description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
         required: false
         type: string
