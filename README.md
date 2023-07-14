@@ -8,13 +8,14 @@ Builds, tests and packs the source code as NuGet package. It's assumed that all 
 
 ### Inputs
 
-|Input name|Description|Required|Type|
-|----------|-----------|--------|----|
+|Input name|Description|Required|Type|Default value|
+|----------|-----------|--------|----|-------------|
 |`configuration`|Define whether this is a debug or a release build.|yes|`string`|
 |`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
 |`is_prerelease`|Define if this is a prerelease.|yes|`boolean`|
 |`suffix`|Define the prerelease suffix, e.g. alpha.|yes|`string`|
 |`publish_target`|Define the publish target (None/nuget.org).|yes|`string`|
+|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|6.0.x|
 
 ## Action `create-release.yml`
 
@@ -24,9 +25,10 @@ Builds, tests and packs the source code as NuGet package. It's assumed that all 
 
 ### Inputs
 
-|Input name|Description|Required|Default value|
-|----------|-----------|--------|-------------|
-|`generate_release_notes`|Generates release notes from the commits since the last release and new contributors and adds them to the GitHub page.|no|`false`|
+|Input name|Description|Required|Type|Default value|
+|----------|-----------|--------|----|-------------|
+|`generate_release_notes`|Generates release notes from the commits since the last release and new contributors and adds them to the GitHub page.|no|`boolean`|`false`|
+|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|6.0.x|
 
 ## Action `develop.yml`
 
@@ -34,9 +36,10 @@ Workflow to build and publish the develop branch.
 
 ### Inputs
 
-|Input name|Description|Required|Type|
-|----------|-----------|--------|----|
+|Input name|Description|Required|Type|Default value|
+|----------|-----------|--------|----|-------------|
 |`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
+|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|6.0.x|
 
 ## Action `feature-branch.yml`
 
@@ -44,9 +47,10 @@ Workflow to build and publish feature/fix branches.
 
 ### Inputs
 
-|Input name|Description|Required|Type|
-|----------|-----------|--------|----|
+|Input name|Description|Required|Type|Default value|
+|----------|-----------|--------|----|-------------|
 |`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
+|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|6.0.x|
 
 ## Action `gitversion.yml`
 
