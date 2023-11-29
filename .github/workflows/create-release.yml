@@ -93,6 +93,7 @@ jobs:
           echo Change version number, commit and push.
           find . -type f -name "*.csproj" -exec sed -i 's#<PackageVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<PackageVersion>${{ env.NUGET_VERSION }}#g' '{}' \;
           find . -type f -name "*.csproj" -exec sed -i 's#<AssemblyVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<AssemblyVersion>${{ env.NUGET_VERSION }}#g' '{}' \;
+          find . -type f -name "*.csproj" -exec sed -i 's#<Version>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<Version>${{ env.NUGET_VERSION }}#g' '{}' \;
 
           git add *.csproj
           git commit -m "Raises version number to ${{ env.NUGET_VERSION }}"
