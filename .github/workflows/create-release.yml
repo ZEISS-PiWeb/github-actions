@@ -51,6 +51,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
           # Invoking workflow has to pass a personal access token with permission to pull/push on the target repo.
           token: ${{ secrets.PUSH_TO_GITHUB_REPO_PAT }}
           
