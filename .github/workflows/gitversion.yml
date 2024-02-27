@@ -46,7 +46,7 @@ jobs:
       semver_raise_type: ${{ steps.gitversion.outputs.version_type }}
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         # Checkout the full repo.
         fetch-depth: 0
@@ -54,7 +54,7 @@ jobs:
     - name: Git Versioning
       id: gitversion
        # Run a custom action from there.
-      uses: paulhatch/semantic-version@v5.0.3
+      uses: paulhatch/semantic-version@v5.4.0
       with:
         # Define the format for assembling the version number.
         tag_prefix: "release/"
