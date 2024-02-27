@@ -31,7 +31,7 @@ jobs:
       branch_name: ${{ steps.normalize.outputs.branch_name }}
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Normalize branch name
       run: |
         # Take the branch name by GitHub variable "ref_name".
