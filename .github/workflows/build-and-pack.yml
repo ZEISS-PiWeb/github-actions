@@ -71,14 +71,14 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      # Build. Don't run restore again.
-      run: dotnet build --no-restore -c ${{ inputs.configuration }}
+      # Build. Don't run restore again. Use the calculated version as assembly version from the step "compute-version".
+      run: dotnet build --no-restore -c ${{ inputs.configuration }} -p:Version=${{ needs.compute-version.outputs.package_version }}
       
     - name: Test
       run: dotnet test --no-build --verbosity normal -c ${{ inputs.configuration }}
       
     - name: Pack
-      # Put the nugets into the folder "package_output". Use the calculated version from the step "compute-version".
+      # Put the nugets into the folder "package_output". Use the calculated version as package version from the step "compute-version".
       if: inputs.do_pack
       run: dotnet pack --no-restore --no-build -o package_output -c ${{ inputs.configuration }} -p:PackageVersion=${{ needs.compute-version.outputs.package_version }}
       
