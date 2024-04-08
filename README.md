@@ -80,6 +80,17 @@ Publish the build artifact (NuGet package) to a target nuget feed.
 |----------|-----------|--------|----|
 |`target`|Define the target feed to push the artifact (e.g. nuget.org).|yes|`string`|
 
+## Action `deploy-gh-pages.yml`
+
+Build GitHub Pages content using Jekyll and deploy the artifactes to the GitHub Pages of your repository.
+
+### Inputs
+
+|Input name|Description|Required|Type|Default value|
+|----------|-----------|--------|----|-------------|
+|`source`|The directory to build GitHub Pages from.|no|`string`|`./`|
+|`destination`|The directory to build GitHub Pages to.|no|`string`|`./_site`|
+
 ## Secrets
 
 Two of the workflows require secrets to be passed on to work as intended:
