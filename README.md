@@ -2,6 +2,20 @@
 
 Repository for reusable GitHub actions.
 
+## Automatic semantic version
+
+We utilize the GitHub action [semantic-version](https://github.com/PaulHatch/semantic-version) to automatically raise package versions when creating releases. In short to the following:
+
++ if introducing new features, append `(MINOR)` to the commit message,
++ if introducing breaking changes, append `(MAJOR)` to the commit message,
++ otherwise do nothing.
+
+The action will calculate the version number change like that:
+
++ any number of `(MAJOR)` since the last release > raise package version to new major (e.g. 5.0.0) and ignore other labels,
++ any number of `(MINOR)` but no `(MAJOR)` since last release > raise package feature version by one (e.g. 5.0.1 becomes 5.1.0),
++ no `(MAJOR)` or `(MINOR)` since last release > raise only patch version by one (e.g. 5.0.1 becomes 5.0.2)
+
 ## Action `build-and-pack.yml`
 
 Builds, tests and packs the source code as NuGet package. It's assumed that all source files reside in a directory `src` inside the root of the repository.
