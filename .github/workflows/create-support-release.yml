@@ -82,7 +82,7 @@ jobs:
           find . -type f -name "*.csproj" -exec sed -i 's#<Version>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<Version>${{ env.NUGET_VERSION }}#g' '{}' \;
 
           git add *.csproj
-          git commit -m "Raises version number to ${{ env.NUGET_VERSION }}"
+          git commit --allow-empty -m "Raises version number to ${{ env.NUGET_VERSION }}"
           
           echo Tag release commit
           git tag release/${{ env.NUGET_VERSION }}
