@@ -85,7 +85,7 @@ jobs:
     - name: Upload artifacts
       # Upload all NuGet packages to GitHub. Artifact name "packages".
       if: inputs.do_pack
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: packages
         path: src/package_output/*.nupkg
