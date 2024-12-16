@@ -1,0 +1,39 @@
+# This workflow
+# + builds the project from the active branch
+# + stores the built project as artifact
+# + unpacks it in another job
+# + and scans its components using OSS Review Toolkit
+#
+# After that the results are uploaded.
+# This workflow must be called separately.
+
+name: OSS Review Toolkit - FOSS scan
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  ort:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Use HTTPS instead of SSH for Git cloning
+        run: git config --global url.https://github.com/.insteadOf ssh://git@github.com/
+      - name: Run GitHub Action for ORT
+        uses: oss-review-toolkit/ort-ci-github-action@v1
+        with:
+          allow-dynamic-versions: 'true'
+          ort-cli-args: '-P ort.analyzer.enabledPackageManagers=Nuget'
+          run: >
+            analyzer,
+            scanner,
+            evaluator,
+            reporter,
+            upload-results
