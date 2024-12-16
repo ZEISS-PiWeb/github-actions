@@ -10,7 +10,7 @@
 name: OSS Review Toolkit - FOSS scan
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 defaults:
   run:
