@@ -40,7 +40,7 @@ jobs:
       - name: Use HTTPS instead of SSH for Git cloning
         run: git config --global url.https://github.com/.insteadOf ssh://git@github.com/
       - name: Run GitHub Action for ORT
-        uses: oss-review-toolkit/ort-ci-github-action@v1
+        uses: oss-review-toolkit/ort-ci-github-action@0650a3c52c02ad7366b8e25aeedf752d5601c417
         with:
           allow-dynamic-versions: 'true'
           ort-cli-args: '-P ort.analyzer.enabledPackageManagers=Nuget'
