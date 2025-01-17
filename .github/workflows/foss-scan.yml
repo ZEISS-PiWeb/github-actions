@@ -1,0 +1,52 @@
+# This workflow
+# + builds the project from the active branch
+# + stores the built project as artifact
+# + unpacks it in another job
+# + and scans its components using OSS Review Toolkit
+#
+# After that the results are uploaded.
+# This workflow must be called separately.
+
+name: OSS Review Toolkit - FOSS scan
+
+on:
+  workflow_call:
+    inputs:
+      dotnet_version:
+        description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
+        required: false
+        type: string
+        default: '6.0.x'
+
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  ort:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+           
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ inputs.dotnet_version }}
+
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Use HTTPS instead of SSH for Git cloning
+        run: git config --global url.https://github.com/.insteadOf ssh://git@github.com/
+      - name: Run GitHub Action for ORT
+        uses: oss-review-toolkit/ort-ci-github-action@0650a3c52c02ad7366b8e25aeedf752d5601c417
+        with:
+          allow-dynamic-versions: 'true'
+          ort-cli-args: '-P ort.analyzer.enabledPackageManagers=Nuget'
+          run: >
+            analyzer,
+            scanner,
+            evaluator,
+            reporter,
+            upload-results
