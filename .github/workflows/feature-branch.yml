@@ -57,7 +57,6 @@ jobs:
       do_pack: ${{ inputs.do_pack }}
       # Needs.<job-name> gives access to the prior job's output.
       suffix: "alpha-${{ needs.get-feature-branch.outputs.branch_name }}"
-      publish_target: "None"
       dotnet_version: ${{ inputs.dotnet_version }}
     # Pass on secrets to the next workflow.
     secrets: inherit
