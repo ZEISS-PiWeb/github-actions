@@ -1,5 +1,9 @@
 # Reusable GitHub Actions
 
+The current workflow contract is available from `main`. Consumers that have
+not migrated to trusted publishing should remain on the `1.1.2` tag. The
+`1.x` tags retain the previous API-key publishing behavior.
+
 Repository for reusable GitHub actions.
 
 ## Automatic semantic version
@@ -28,8 +32,7 @@ Builds, tests and packs the source code as NuGet package. It's assumed that all 
 |`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
 |`is_prerelease`|Define if this is a prerelease.|yes|`boolean`|
 |`suffix`|Define the prerelease suffix, e.g. alpha.|yes|`string`|
-|`publish_target`|Define the publish target (None/nuget.org).|yes|`string`|
-|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|6.0.x|
+|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|10.0.x|
 
 ## Action `create-release.yml`
 
@@ -42,29 +45,29 @@ Builds, tests and packs the source code as NuGet package. It's assumed that all 
 |Input name|Description|Required|Type|Default value|
 |----------|-----------|--------|----|-------------|
 |`generate_release_notes`|Generates release notes from the commits since the last release and new contributors and adds them to the GitHub page.|no|`boolean`|`false`|
-|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|6.0.x|
+|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|10.0.x|
 
 ## Action `develop.yml`
 
-Workflow to build and publish the develop branch.
+Workflow to build, test, and package the develop branch.
 
 ### Inputs
 
 |Input name|Description|Required|Type|Default value|
 |----------|-----------|--------|----|-------------|
 |`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
-|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|6.0.x|
+|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|10.0.x|
 
 ## Action `feature-branch.yml`
 
-Workflow to build and publish feature/fix branches.
+Workflow to build, test, and package feature/fix branches.
 
 ### Inputs
 
 |Input name|Description|Required|Type|Default value|
 |----------|-----------|--------|----|-------------|
 |`do_pack`|If this build should be packed as NuGet package.|yes|`boolean`|
-|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|6.0.x|
+|`dotnet_version`|The .NET SDK version that should be used by the runner|no|`string`|10.0.x|
 
 ## Action `gitversion.yml`
 
@@ -84,16 +87,6 @@ This workflow uses [semantic-version by paulhatch](https://github.com/PaulHatch/
 |`package_version`|Computed version for the package (SemVer).|`string`|
 |`semver_raise_type`|The type of version raise (major,minor,patch).|`string`|
 
-## Action `publish.yml`
-
-Publish the build artifact (NuGet package) to a target nuget feed.
-
-### Inputs
-
-|Input name|Description|Required|Type|
-|----------|-----------|--------|----|
-|`target`|Define the target feed to push the artifact (e.g. nuget.org).|yes|`string`|
-
 ## Action `deploy-gh-pages.yml`
 
 Build GitHub Pages content using Jekyll and deploy the artifactes to the GitHub Pages of your repository.
@@ -107,7 +100,19 @@ Build GitHub Pages content using Jekyll and deploy the artifactes to the GitHub 
 
 ## Secrets
 
-Two of the workflows require secrets to be passed on to work as intended:
+NuGet publication is not performed by the reusable workflows. They build and
+upload the `packages` artifact. Consumers should publish from a workflow job
+defined in their own repository using NuGet trusted publishing:
 
-* `publish.yml` pushes NuGet packages to nuget.org and needs a personal access token named `NUGET_FEED_PAT` with proper permissions
-* `create-release.yml` creates commits, merges and creates branches and pushes to the target repository and need a GitHub personal access token name `PUSH_TO_GITHUB_REPO_PAT` (classic token with the following permissions: `public_repo`, `read:user` and `user:email`)
+* `NUGET_USER` is the NuGet profile name used by `NuGet/login@v1`; it is not an
+  API key or email address.
+* The caller's publish job must grant `id-token: write`.
+* The caller-owned job should run `NuGet/login@v1` and `dotnet nuget push`
+  directly. NuGet trusted-publishing policy matching currently does not work
+  reliably when `NuGet/login@v1` runs inside a reusable workflow; see
+  [NuGet/login issue #6](https://github.com/NuGet/login/issues/6).
+
+`create-release.yml` and `create-support-release.yml` create commits, merge
+branches, create tags, and push to the target repository. They require a
+GitHub personal access token named `PUSH_TO_GITHUB_REPO_PAT` with the
+permissions required by the consuming repository.

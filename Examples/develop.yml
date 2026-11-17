@@ -14,7 +14,7 @@ on:
 
 jobs:
   develop:
-    uses: ZEISS-PiWeb/github-actions/.github/workflows/develop.yml@2.0.0
+    uses: ZEISS-PiWeb/github-actions/.github/workflows/develop.yml@main
     permissions:
       contents: read
     with:
@@ -31,7 +31,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "6.0.x"
+          dotnet-version: "10.0.x"
 
       - name: Download NuGet packages
         uses: actions/download-artifact@v4
