@@ -15,10 +15,10 @@ on:
         required: true
         type: boolean
       dotnet_version:
-        description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
+        description: 'The .NET SDK version that should be used by the runner (e.g. 10.0.x).'
         required: false
         type: string
-        default: '6.0.x'
+        default: '10.0.x'
 
 jobs:
   # Determines the feature branch name.

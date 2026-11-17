@@ -35,10 +35,10 @@ on:
         type: string
         default: ''
       dotnet_version:
-        description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
+        description: 'The .NET SDK version that should be used by the runner (e.g. 10.0.x).'
         required: false
         type: string
-        default: '6.0.x'
+        default: '10.0.x'
 
 defaults:
   run:
@@ -65,7 +65,7 @@ jobs:
         ref: ${{ inputs.ref }}
            
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ inputs.dotnet_version }}
         
