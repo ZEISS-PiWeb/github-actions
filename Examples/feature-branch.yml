@@ -12,8 +12,7 @@ on:
 
 jobs:
   publish-feature-branch:
-    # With @main we want the latest version. Consider using a version tag to avoid breaking changes.
-    uses: ZEISS-PiWeb/github-actions/.github/workflows/feature-branch.yml@main
+    uses: ZEISS-PiWeb/github-actions/.github/workflows/feature-branch.yml@2.0.0
     with:
       do_pack: true  
     secrets: inherit

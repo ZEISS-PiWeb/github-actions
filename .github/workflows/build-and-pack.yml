@@ -2,8 +2,7 @@
 # + computes a semantic version,
 # + builds and tests the active branch,
 # + packs a NuGet with the given configuration,
-# + stores the package as artifact
-# + and publishes the package on pushes and manual runs.
+# + stores the package as artifact.
 #
 # It's assumed that all source files reside in a directory 'src' inside the root of the repository.
 # This workflow must be called from other workflows.
@@ -30,10 +29,11 @@ on:
         description: 'Define the prerelease suffix, e.g. alpha.'
         required: true
         type: string
-      publish_target:
-        description: 'Define the publish target (None/nuget.org).'
-        required: true
+      ref:
+        description: 'Git ref to build.'
+        required: false
         type: string
+        default: ''
       dotnet_version:
         description: 'The .NET SDK version that should be used by the runner (e.g. 6.0.x).'
         required: false
@@ -61,6 +61,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.ref }}
            
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
@@ -89,12 +91,3 @@ jobs:
       with:
         name: packages
         path: src/package_output/*.nupkg
-        
-  publish:
-    needs: build-and-pack
-    # Publish NuGet packages only on "push" events (merge of PR into develop) or on manual run (on release).
-    if: ${{ inputs.do_pack && ( github.event_name == 'push' || github.event_name == 'workflow_dispatch' ) }}
-    uses: ./.github/workflows/publish.yml
-    with:
-      target: ${{ inputs.publish_target }}
-    secrets: inherit

@@ -3,11 +3,11 @@
 # + raises version numbers semantically,
 # + sets a version tag,
 # + generates release notes from commits and contributors
-# + and publishes a NuGet.
+# + and builds the support packages as an artifact.
 #
 # This workflow must be called from other workflows.
 
-name: Create & Publish - Releasing new support version
+name: Create support release and package
 
 on:
   workflow_call:
@@ -81,7 +81,7 @@ jobs:
           find . -type f -name "*.csproj" -exec sed -i 's#<AssemblyVersion>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<AssemblyVersion>${{ env.NUGET_VERSION }}#g' '{}' \;
           find . -type f -name "*.csproj" -exec sed -i 's#<Version>[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]#<Version>${{ env.NUGET_VERSION }}#g' '{}' \;
 
-          git add *.csproj
+          git add -- '**/*.csproj'
           git commit --allow-empty -m "Raises version number to ${{ env.NUGET_VERSION }}"
           
           echo Tag release commit
@@ -100,15 +100,13 @@ jobs:
           makeLatest: "false"
           tag: release/${{ needs.compute-version.outputs.package_version }}
           
-  build-and-publish:
+  build:
     needs: release-flow
-    # Last but not least, run, package and publish from "main" to upload stable NuGet.
+    # Build and upload support packages. Publication belongs to the caller.
     uses: ./.github/workflows/build-and-pack.yml
     with:
       configuration: "Release"
       do_pack: true
       is_prerelease: false
       suffix: "stable"
-      publish_target: "nuget.org"
       dotnet_version: ${{ inputs.dotnet_version }}
-    secrets: inherit
