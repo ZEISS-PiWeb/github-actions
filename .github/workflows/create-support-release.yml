@@ -11,6 +11,10 @@ name: Create support release and package
 
 on:
   workflow_call:
+    secrets:
+      PUSH_TO_GITHUB_REPO_PAT:
+        description: 'Personal access token with permission to pull and push to the target repository.'
+        required: true
     inputs:
       generate_release_notes:
         description: 'Generates release notes from the commits since the last release and new contributors and adds them to the GitHub page.'
