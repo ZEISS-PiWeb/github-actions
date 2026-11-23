@@ -115,4 +115,7 @@ defined in their own repository using NuGet trusted publishing:
 `create-release.yml` and `create-support-release.yml` create commits, merge
 branches, create tags, and push to the target repository. They require a
 GitHub personal access token named `PUSH_TO_GITHUB_REPO_PAT` with the
-permissions required by the consuming repository.
+permissions required by the consuming repository. The calling job must pass
+this secret to the reusable workflow, as shown in the
+[release](Examples/create-release.yml) and
+[support release](Examples/create-support-release.yml) examples.
